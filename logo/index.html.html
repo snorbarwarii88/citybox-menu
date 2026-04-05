@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Box Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Noto Sans Arabic', sans-serif; 
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #eeeeee;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: #f97316;
+        }
+        .food-img {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 2px solid #f97316;
+        }
+        .price-tag {
+            background: linear-gradient(90deg, #f97316 0%, #ea580c 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <header class="relative py-10 px-4 text-center">
+        <div class="relative z-10 flex flex-col items-center">
+            <img src="logo.jpg" class="w-24 h-24 rounded-full border-4 border-orange-500 shadow-2xl mb-4 object-cover">
+            <h1 class="text-4xl font-extrabold text-white tracking-widest uppercase">City Box</h1>
+            <p class="text-orange-500 text-sm mt-1 font-bold italic">تامەوکا جودا د هەر بۆکسەکێ دا</p>
+            
+            <div class="flex gap-3 mt-6 bg-black/30 p-1 rounded-full border border-white/10">
+                <button onclick="setLang('ku')" class="px-5 py-1.5 rounded-full text-sm font-bold transition-all bg-orange-600">بادینی</button>
+                <button onclick="setLang('ar')" class="px-5 py-1.5 rounded-full text-sm font-bold hover:bg-white/10 transition-all">العربية</button>
+                <button onclick="setLang('en')" class="px-5 py-1.5 rounded-full text-sm font-bold hover:bg-white/10 transition-all">English</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 max-w-xl">
+        <div id="menu-container" class="space-y-12"></div>
+    </main>
+
+    <script>
+        const translations = {
+            ku: { currency: "دینار", sections: { rizo: "ژەمان ڕیزۆ", mandi: "ژەمان مەندی", burger_meat: "بەرگرێ گۆشت", burger_chicken: "بەرگرێ مریشک", pasta: "ماک و پاستا", snacks: "سناک و فڕایز", box: "بۆکس فێنکەر", roll: "ڕۆل و ساندویچ", extras: "زێدەهی" } },
+            ar: { currency: "دينار", sections: { rizo: "وجبات الريزو", mandi: "وجبات المندي", burger_meat: "بركر لحم", burger_chicken: "بركر دجاج", pasta: "ماك وباستا", snacks: "سناك وبطاطس", box: "بوكس فنكر", roll: "رول وساندويتش", extras: "إضافات" } },
+            en: { currency: "IQD", sections: { rizo: "Rizo Meals", mandi: "Mandi Meals", burger_meat: "Meat Burgers", burger_chicken: "Chicken Burgers", pasta: "Mac & Pasta", snacks: "Snacks & Fries", box: "Box Finker", roll: "Roll & Sandwich", extras: "Extras" } }
+        };
+
+        const menuData = {
+            rizo: [
+                { id: 1, name: { ku: "کلاسیک ڕیزۆ", ar: "ريزو كلاسيك", en: "Classic Rizo" }, price: "6,500", img: "rizo1.jpg" },
+                { id: 2, name: { ku: "ڕیزۆیا تیژ", ar: "ريزو حار", en: "Spicy Rizo" }, price: "7,000", img: "rizo2.jpg" },
+                { id: 3, name: { ku: "ڕیزۆ جبن", ar: "ريزو جبن", en: "Cheese Rizo" }, price: "7,000", img: "rizo3.jpg" }
+            ],
+            mandi: [
+                { id: 8, name: { ku: "مەندی مریشک", ar: "مندي دجاج", en: "Chicken Mandi" }, price: "6,500", img: "mandi1.jpg" },
+                { id: 9, name: { ku: "مەندی تیژ", ar: "مندي حار", en: "Spicy Mandi" }, price: "7,000", img: "mandi2.jpg" },
+                { id: 10, name: { ku: "مەندی فطر", ar: "مندي فطر", en: "Mushroom Mandi" }, price: "7,500", img: "mandi3.jpg" }
+            ],
+            burger_meat: [
+                { id: 11, name: { ku: "کلاسیک بەرگر", ar: "كلاسيك بركر", en: "Classic Burger" }, price: "6,000", img: "meat1.jpg" },
+                { id: 12, name: { ku: "سماش بەرگر", ar: "سماش بركر", en: "Smash Burger" }, price: "6,500", img: "meat2.jpg" },
+                { id: 14, name: { ku: "وەنستەر بەرگر", ar: "ونستر بركر", en: "Monster Burger" }, price: "9,000", img: "meat3.jpg" }
+            ],
+            burger_chicken: [
+                { id: 17, name: { ku: "مایتی زنجەر", ar: "مايتي زنجر", en: "Mighty Zinger" }, price: "6,000", img: "chick1.jpg" },
+                { id: 20, name: { ku: "دهۆک بەرگر", ar: "دهوك بركر", en: "Dahok Burger" }, price: "9,000", img: "chick2.jpg" }
+            ],
+            pasta: [
+                { id: 29, name: { ku: "ماک ئەند چیس", ar: "ماك اند جيس", en: "Mac & Cheese" }, price: "5,000", img: "pasta1.jpg" },
+                { id: 30, name: { ku: "کریسبی ماک", ar: "كرسبي ماك", en: "Crispy Mac" }, price: "6,500", img: "pasta2.jpg" }
+            ],
+            box: [
+                { id: 23, name: { ku: "فێنکەر ب جبن", ar: "فنكر بالجبن", en: "Cheese Fries Box" }, price: "4,000", img: "box1.jpg" },
+                { id: 27, name: { ku: "کریزی بۆکس", ar: "كريزي بوكس", en: "Crazy Box" }, price: "7,000", img: "box2.jpg" }
+            ],
+            roll: [
+                { id: 31, name: { ku: "صاج مریشک", ar: "صاج دجاج", en: "Chicken Saj" }, price: "4,500", img: "roll1.jpg" },
+                { id: 33, name: { ku: "کریسبی ساندویچ", ar: "كرسبي سندويتش", en: "Crispy Sandwich" }, price: "4,500", img: "roll2.jpg" }
+            ],
+            snacks: [
+                { id: 37, name: { ku: "حەلقێن پیڤازی", ar: "حلقات بصل", en: "Onion Rings" }, price: "3,500", img: "snack1.jpg" },
+                { id: 39, name: { ku: "فڕایز", ar: "فنكر", en: "Fries" }, price: "3,000", img: "snack2.jpg" }
+            ],
+            extras: [
+                { id: 100, name: { ku: "بیپسی مەکینە", ar: "بيبسي مكينة", en: "Pepsi Machine" }, price: "1,500", img: "extra1.jpg" },
+                { id: 101, name: { ku: "سۆسێ سیتی بۆکس", ar: "صوص سيتي بوكس", en: "City Box Sauce" }, price: "500", img: "extra2.jpg" }
+            ]
+        };
+
+        function setLang(lang) {
+            document.documentElement.dir = (lang === 'en') ? 'ltr' : 'rtl';
+            renderMenu(lang);
+        }
+
+        function renderMenu(lang) {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+            
+            for (const [section, items] of Object.entries(menuData)) {
+                let html = `<div>
+                    <h2 class="text-xl font-bold text-center mb-6 text-orange-500 uppercase flex items-center justify-center gap-3">
+                        <span class="h-px w-8 bg-orange-500/30"></span>
+                        ${translations[lang].sections[section]}
+                        <span class="h-px w-8 bg-orange-500/30"></span>
+                    </h2>
+                    <div class="grid gap-4">`;
+                
+                items.forEach(item => {
+                    html += `
+                        <div class="glass-card p-3 rounded-2xl flex items-center gap-4">
+                            <img src="${item.img}" class="food-img w-20 h-20 rounded-xl object-cover" onerror="this.src='https://via.placeholder.com/100?text=Food'">
+                            <div class="flex-1">
+                                <h3 class="text-md font-bold text-white">${item.name[lang]}</h3>
+                                <div class="mt-2 inline-block price-tag px-3 py-0.5 rounded-full text-xs font-black text-white">
+                                    ${item.price} ${translations[lang].currency}
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                html += `</div></div>`;
+                container.innerHTML += html;
+            }
+        }
+        setLang('ku');
+    </script>
+</body>
+</html>
